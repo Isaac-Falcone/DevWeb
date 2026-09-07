@@ -1,43 +1,57 @@
 import { useEffect, useState, useRef } from "react";
 import { useInView } from "framer-motion";
 
+/**
+ * Propriedades para o contador animado.
+ */
 interface AnimatedNumberProps {
   value: number;
   duration?: number;
   suffix?: string;
 }
 
+/**
+ * AnimatedNumber Component
+ * Renderiza um número que conta de zero até o valor alvo de forma fluida.
+ * Utiliza `requestAnimationFrame` para otimização de performance (evitando gaps de rendering).
+ */
 export function AnimatedNumber({ value, duration = 2.5, suffix = "" }: AnimatedNumberProps) {
   const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const elementRef = useRef<HTMLSpanElement>(null);
+  const isElementInView = useInView(elementRef, { once: true, margin: "-50px" });
 
   useEffect(() => {
-    if (!isInView) return;
+    if (!isElementInView) return;
 
-    let start = 0;
-    const end = value;
-    // Assume 60fps (16ms per frame)
-    const totalFrames = Math.round((duration * 1000) / 16);
-    let frame = 0;
+    let startTime: number | null = null;
+    let animationFrameId: number;
 
-    const counter = setInterval(() => {
-      frame++;
-      const progress = frame / totalFrames;
-      // Ease Out Quart for a fast start and slow smooth finish
-      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-      const current = Math.round(end * easeOutQuart);
+    const endValue = value;
+    const durationMs = duration * 1000;
+
+    const updateCounter = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const elapsedTime = timestamp - startTime;
       
-      setCount(current);
+      const progress = Math.min(elapsedTime / durationMs, 1);
+      
+      // Curva de aceleração: Ease Out Quart (Início rápido, final suave)
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      const currentCount = Math.round(endValue * easeOutQuart);
+      
+      setCount(currentCount);
 
-      if (frame >= totalFrames) {
-        setCount(end);
-        clearInterval(counter);
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(updateCounter);
+      } else {
+        setCount(endValue);
       }
-    }, 16);
+    };
 
-    return () => clearInterval(counter);
-  }, [isInView, value, duration]);
+    animationFrameId = requestAnimationFrame(updateCounter);
 
-  return <span ref={ref}>{count}{suffix}</span>;
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [isElementInView, value, duration]);
+
+  return <span ref={elementRef}>{count}{suffix}</span>;
 }

@@ -1,7 +1,11 @@
-import { motion, useAnimation, useInView, MotionStyle } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
+import { motion, useAnimation, useInView, MotionStyle, Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 
+/**
+ * Propriedades do componente MotionReveal.
+ * Centraliza a configuração das animações de entrada (reveal) dos elementos da interface.
+ */
 interface MotionRevealProps {
   children: React.ReactNode;
   className?: string;
@@ -12,6 +16,11 @@ interface MotionRevealProps {
   style?: MotionStyle;
 }
 
+/**
+ * MotionReveal Component
+ * Componente wrapper para revelar elementos quando entram no viewport.
+ * Utiliza o intersection observer integrado do Framer Motion para otimização de performance.
+ */
 export function MotionReveal({
   children,
   className,
@@ -21,19 +30,22 @@ export function MotionReveal({
   once = true,
   style,
 }: MotionRevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once, margin: "-10%" });
-  const controls = useAnimation();
+  // Referências e Hooks de Animação
+  const elementRef = useRef<HTMLDivElement>(null);
+  const animationControls = useAnimation();
+  const isElementInView = useInView(elementRef, { once, margin: "-10%" });
 
+  // Controle do ciclo de vida da animação baseado na visibilidade (Viewport)
   useEffect(() => {
-    if (isInView) {
-      controls.start("visible");
+    if (isElementInView) {
+      animationControls.start("visible");
     } else if (!once) {
-      controls.start("hidden");
+      animationControls.start("hidden");
     }
-  }, [isInView, controls, once]);
+  }, [isElementInView, animationControls, once]);
 
-  const variants = {
+  // Memoização das variantes de animação para evitar recálculo em re-renderizações
+  const animationVariants = useMemo<Variants>(() => ({
     hidden: {
       opacity: 0,
       y: direction === "up" ? 40 : direction === "down" ? -40 : 0,
@@ -47,20 +59,20 @@ export function MotionReveal({
       scale: 1,
       transition: {
         duration,
-        ease: [0.16, 1, 0.3, 1] as const, // easeSmooth
+        ease: [0.16, 1, 0.3, 1] as const, // Curva de aceleração suave (easeSmooth)
         delay: delay / 1000,
       },
     },
-  };
+  }), [direction, duration, delay]);
 
   return (
     <motion.div
-      ref={ref}
-      variants={variants}
+      ref={elementRef}
+      variants={animationVariants}
       initial="hidden"
-      animate={controls}
+      animate={animationControls}
       className={cn(className)}
-      style={style}
+      {...(style ? { style } : {})}
     >
       {children}
     </motion.div>
