@@ -1,0 +1,267 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * DevWeb Elite Design System - Faithful Edition
+ * Clean, high-contrast, Apple-like precision with dark/light sections.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --radius-bento: 24px;
+  --radius-card: 20px;
+
+  --font-sans: "Inter", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-ink-dark: var(--ink-dark);
+  --color-ink-soft: var(--ink-soft);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-magenta: var(--magenta);
+  --color-peach: var(--peach);
+  --color-neon-blue: var(--neon-blue);
+  --color-border: var(--border);
+}
+
+:root {
+  --radius: 0.75rem;
+
+  /* 1.1 backgrounds - Pure White for the main body */
+  --background: oklch(0.99 0 0); /* #FCFCFC */
+  --ink-dark: oklch(0.12 0.01 285); /* #0A0A0B used for Hero/Footer */
+  
+  /* 1.2 surfaces */
+  --surface: oklch(1 0 0); /* White cards */
+
+  /* 1.3 text */
+  --foreground: oklch(0.15 0 0); /* Dark text for readability */
+  --ink-soft: oklch(0.5 0 0); /* Gray text */
+
+  /* 1.4 brand colors */
+  --primary: oklch(0.6 0.25 290); /* Neon Purple */
+  --primary-foreground: oklch(1 0 0);
+  
+  --magenta: oklch(0.65 0.25 340); /* Neon Pink */
+  --peach: oklch(0.7 0.2 45); /* Neon Orange/Peach */
+  --neon-blue: oklch(0.7 0.15 250); /* Cyan/Blue */
+
+  --border: oklch(0.92 0 0); /* Very light gray border */
+
+  /* 1.5 gradients */
+  --gradient-brand: linear-gradient(135deg, var(--primary), var(--magenta));
+  --gradient-sunset: linear-gradient(135deg, var(--magenta), var(--peach));
+  --gradient-ocean: linear-gradient(135deg, var(--primary), var(--neon-blue));
+
+  /* 3.2 shadows */
+  --shadow-bento: 0px 4px 20px rgb(0 0 0 / 0.04), 0px 1px 2px rgb(0 0 0 / 0.02);
+  --shadow-bento-hover: 0px 12px 32px rgb(0 0 0 / 0.08), 0px 2px 8px rgb(0 0 0 / 0.04);
+  --shadow-float: 0px 20px 40px rgb(0 0 0 / 0.3);
+  --shadow-glow-purple: 0px 0px 30px rgb(124 58 237 / 0.2);
+
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+}
+
+/* ---------- Bento & Cards ---------- */
+
+@utility bento-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-bento);
+  box-shadow: var(--shadow-bento);
+  position: relative;
+  overflow: hidden;
+}
+
+@utility bento-card-interactive {
+  @apply bento-card;
+  transition: transform 0.4s var(--ease-smooth), box-shadow 0.4s var(--ease-smooth);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-bento-hover);
+  }
+}
+
+@utility glass-panel {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-card);
+}
+
+/* ---------- Text Effects ---------- */
+
+@utility text-gradient-brand {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility text-gradient-sunset {
+  background: var(--gradient-sunset);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility label-micro {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ---------- Glows ---------- */
+
+@utility glow-orb-primary {
+  background: var(--primary);
+  filter: blur(140px);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+@utility glow-orb-magenta {
+  background: var(--magenta);
+  filter: blur(140px);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+@utility glow-orb-peach {
+  background: var(--peach);
+  filter: blur(140px);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+@utility glow-pulse-slow {
+  animation: pulse-slow 8s infinite alternate ease-in-out;
+}
+
+@keyframes pulse-slow {
+  0% { transform: scale(1) translate(0, 0); opacity: 0.8; }
+  100% { transform: scale(1.1) translate(5%, 5%); opacity: 1; }
+}
+
+/* ---------- Buttons & Badges ---------- */
+
+@utility btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: oklch(0.55 0.25 290);
+    transform: scale(1.02);
+  }
+}
+
+@utility btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--foreground);
+  background: oklch(0.96 0 0);
+  border: 1px solid oklch(0.92 0 0);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: oklch(0.92 0 0);
+    transform: scale(1.02);
+  }
+}
+
+/* ---------- Grid Patterns ---------- */
+
+@utility grid-pattern-dots {
+  background-image: radial-gradient(oklch(0.1 0 0 / 0.1) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ---------- Custom Utilities for Dark Sections ---------- */
+@utility section-dark {
+  background-color: var(--ink-dark);
+  color: oklch(1 0 0);
+  
+  .btn-secondary {
+    color: oklch(1 0 0);
+    background: oklch(1 0 0 / 0.1);
+    border-color: oklch(1 0 0 / 0.15);
+    &:hover { background: oklch(1 0 0 / 0.15); }
+  }
+  
+  .text-ink-soft {
+    color: oklch(0.7 0.02 285);
+  }
+}
+
+/* ---------- Marquee Animation ---------- */
+@keyframes marquee-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-50% - 1rem)); }
+}
+
+@utility animate-marquee-left {
+  animation: marquee-left 40s linear infinite;
+}
+
+@utility project-card-tilt {
+  transform: rotate(-5deg);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: rotate(-2deg) scale(1.02);
+    box-shadow: var(--shadow-bento-hover);
+  }
+}
